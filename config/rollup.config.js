@@ -4,7 +4,7 @@ import commonjs from "rollup-plugin-commonjs"
 import resolve from "rollup-plugin-node-resolve"
 
 export default {
-    entry: "src/purifycss.js",
+    entry: "src/index.js",
     targets: [
         {
             dest: "lib/purifycss.es.js",
@@ -20,17 +20,11 @@ export default {
         resolve(),
         commonjs(),
         babel({
-          exclude: "node_modules/**",
-          presets: [
-            [
-              "es2015", {
-                "modules": false
-              }
-            ]
-          ],
-          "plugins": [ "external-helpers" ]
+            exclude: "node_modules/**",
+            presets: ["flow", ["es2015", { modules: false }]],
+            plugins: ["external-helpers", "transform-class-properties"]
         })
     ],
-    external: ["clean-css", "glob", "rework", "uglifyjs"],
+    external: ["postcss", "postcss-selector-parser", "rework", "uglifyjs"],
     sourceMap: false
 }
