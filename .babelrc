@@ -1,5 +1,24 @@
 {
-    "presets": [
-        "es2015"
-    ]
+    "env": {
+        "test": {
+            "presets": [
+                "es2015"
+            ]
+        },
+        "development": {
+            "presets": [
+                "flow",
+                [
+                    "es2015",
+                    {
+                        "modules": false
+                    }
+                ]
+            ],
+            "plugins": [
+                "external-helpers",
+                "transform-class-properties"
+            ]
+        }
+    }
 }

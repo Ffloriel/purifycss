@@ -93,6 +93,7 @@ class PurifyCss {
             }
             node.remove()
         })
+        return root;
     }
 
     isIgnoreAnnotation(node) {
