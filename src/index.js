@@ -10,6 +10,7 @@ import {
     ERROR_MISSING_CONTENT,
     ERROR_MISSING_CSS,
     ERROR_EXTRACTER_FAILED,
+    ERROR_OPTIONS_TYPE,
     IGNORE_ANNOTATION
 } from "./constants/constants"
 
@@ -20,15 +21,18 @@ class PurifyCss {
     selectors: Set<string>
 
     constructor(options: Options) {
-        if (!options.content) throw new Error(ERROR_MISSING_CONTENT)
-        if (!options.css) throw new Error(ERROR_MISSING_CSS)
+        if (typeof options !== "object") throw new TypeError(ERROR_OPTIONS_TYPE)
+        if (!options.content || !options.content.length)
+            throw new Error(ERROR_MISSING_CONTENT)
+        if (!options.css || !options.css.length)
+            throw new Error(ERROR_MISSING_CSS)
         this.options = Object.assign(options, defaultOptions)
         this.selectors = new Set()
     }
 
     purify() {
         // Get selectors from content files
-        let cssClasses = this.extractContentSelector(
+        let cssClasses = this.extractFileSelector(
             this.options.content,
             this.options.extracters
         )
@@ -93,7 +97,7 @@ class PurifyCss {
             }
             node.remove()
         })
-        return root;
+        return root
     }
 
     isIgnoreAnnotation(node) {
@@ -103,24 +107,5 @@ class PurifyCss {
         return false
     }
 }
-
-// quick test
-const files = ["hello.js", "truc.html", "index.js", "templ.pug"]
-const css = ".container table tbody, .container:not(.truc) { font-size: 15px;}"
-
-// const extractersTest = [
-//     {
-//         extracter: {},
-//         extensions: ["js", "jsx"]
-//     }
-// ]
-// const puri = new PurifyCss({
-//     content: files,
-//     css,
-//     extracters: extractersTest
-// })
-// puri.getSelectorsCss(css)
-
-// puri.extractContentSelector(files, extractersTest)
 
 export default PurifyCss
