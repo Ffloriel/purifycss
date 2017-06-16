@@ -4,7 +4,8 @@ export type Options = {
     css: Array<string>,
     extracters?: Array<ExtractersObj>,
     whitelist?: Array<string>,
-    output?: string | boolean,
+    output?: string,
+    stdout?: boolean,
     info?: boolean,
     rejected?: boolean
 }

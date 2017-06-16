@@ -84,4 +84,159 @@ describe("initialize purifycss", () => {
             })
         })
     })
+
+    it("throws an error with an incorrect output option", () => {
+        expect(() => {
+            new PurifyCss({
+                content: ["index.html"],
+                css: ["style.css"],
+                output: {}
+            })
+        }).toThrow()
+        expect(() => {
+            new PurifyCss({
+                content: ["index.html"],
+                css: ["style.css"],
+                output: 100
+            })
+        }).toThrow()
+        expect(() => {
+            new PurifyCss({
+                content: ["index.html"],
+                css: ["style.css"],
+                output: true
+            }).toThrow()
+        })
+        expect(() => {
+            new PurifyCss({
+                content: ["index.html"],
+                css: ["style.css"],
+                output: () => {}
+            }).toThrow()
+        })
+    })
+
+    it("throws an error with an incorrect stdout option", () => {
+        expect(() => {
+            new PurifyCss({
+                content: ["index.html"],
+                css: ["style.css"],
+                stdout: {}
+            })
+        }).toThrow()
+        expect(() => {
+            new PurifyCss({
+                content: ["index.html"],
+                css: ["style.css"],
+                stdout: 100
+            })
+        }).toThrow()
+        expect(() => {
+            new PurifyCss({
+                content: ["index.html"],
+                css: ["style.css"],
+                stdout: "hello"
+            }).toThrow()
+        })
+        expect(() => {
+            new PurifyCss({
+                content: ["index.html"],
+                css: ["style.css"],
+                stdout: () => {}
+            }).toThrow()
+        })
+    })
+
+    it("throws an error with an incorrect stdout option", () => {
+        expect(() => {
+            new PurifyCss({
+                content: ["index.html"],
+                css: ["style.css"],
+                stdout: {}
+            })
+        }).toThrow()
+        expect(() => {
+            new PurifyCss({
+                content: ["index.html"],
+                css: ["style.css"],
+                stdout: 100
+            })
+        }).toThrow()
+        expect(() => {
+            new PurifyCss({
+                content: ["index.html"],
+                css: ["style.css"],
+                stdout: "hello"
+            }).toThrow()
+        })
+        expect(() => {
+            new PurifyCss({
+                content: ["index.html"],
+                css: ["style.css"],
+                stdout: () => {}
+            }).toThrow()
+        })
+    })
+
+    it("throws an error with an incorrect info option", () => {
+        expect(() => {
+            new PurifyCss({
+                content: ["index.html"],
+                css: ["style.css"],
+                info: {}
+            })
+        }).toThrow()
+        expect(() => {
+            new PurifyCss({
+                content: ["index.html"],
+                css: ["style.css"],
+                info: 100
+            })
+        }).toThrow()
+        expect(() => {
+            new PurifyCss({
+                content: ["index.html"],
+                css: ["style.css"],
+                info: "hello"
+            }).toThrow()
+        })
+        expect(() => {
+            new PurifyCss({
+                content: ["index.html"],
+                css: ["style.css"],
+                info: () => {}
+            }).toThrow()
+        })
+    })
+
+    it("throws an error with an incorrect rejected option", () => {
+        expect(() => {
+            new PurifyCss({
+                content: ["index.html"],
+                css: ["style.css"],
+                rejected: {}
+            })
+        }).toThrow()
+        expect(() => {
+            new PurifyCss({
+                content: ["index.html"],
+                css: ["style.css"],
+                rejected: 100
+            })
+        }).toThrow()
+        expect(() => {
+            new PurifyCss({
+                content: ["index.html"],
+                css: ["style.css"],
+                rejected: "hello"
+            }).toThrow()
+        })
+        expect(() => {
+            new PurifyCss({
+                content: ["index.html"],
+                css: ["style.css"],
+                rejected: () => {}
+            }).toThrow()
+        })
+    })
 })
