@@ -11,6 +11,12 @@ import {
     ERROR_MISSING_CSS,
     ERROR_EXTRACTER_FAILED,
     ERROR_OPTIONS_TYPE,
+    ERROR_OUTPUT_TYPE,
+    ERROR_EXTRACTERS_TYPE,
+    ERROR_WHITELIST_TYPE,
+    ERROR_STDOUT_TYPE,
+    ERROR_INFO_TYPE,
+    ERROR_REJECTED_TYPE,
     IGNORE_ANNOTATION
 } from "./constants/constants"
 
@@ -21,13 +27,29 @@ class PurifyCss {
     selectors: Set<string>
 
     constructor(options: Options) {
+        this.checkOptions(options)
+        this.options = Object.assign(defaultOptions, options)
+        this.selectors = new Set()
+    }
+
+    checkOptions(options: Options) {
         if (typeof options !== "object") throw new TypeError(ERROR_OPTIONS_TYPE)
         if (!options.content || !options.content.length)
             throw new Error(ERROR_MISSING_CONTENT)
         if (!options.css || !options.css.length)
             throw new Error(ERROR_MISSING_CSS)
-        this.options = Object.assign(defaultOptions, options)
-        this.selectors = new Set()
+        if (options.output && typeof options.output !== "string")
+            throw new TypeError(ERROR_OUTPUT_TYPE)
+        if (options.extracters && !Array.isArray(options.extracters))
+            throw new TypeError(ERROR_EXTRACTERS_TYPE)
+        if (options.whitelist && !Array.isArray(options.whitelist))
+            throw new TypeError(ERROR_WHITELIST_TYPE)
+        if (options.stdout && typeof options.stdout !== "boolean")
+            throw new TypeError(ERROR_STDOUT_TYPE)
+        if (options.info && typeof options.info !== "boolean")
+            throw new TypeError(ERROR_INFO_TYPE)
+        if (options.rejected && typeof options.rejected !== "boolean")
+            throw new TypeError(ERROR_REJECTED_TYPE)
     }
 
     purify() {

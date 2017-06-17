@@ -347,13 +347,6 @@ describe("purify methods with files", () => {
     })
 
     describe("filters out unused selectors", () => {
-        const purifycss = new PurifyCss({
-            content: [`${root}remove_unused/remove_unused.js`],
-            css: [`${root}remove_unused/remove_unused.css`],
-            legacy: true
-        })
-        const result = purifycss.purify()[0].css
-
         it("contains .used-class", () => {
             const purifycss = new PurifyCss({
                 content: [`${root}remove_unused/remove_unused.js`],

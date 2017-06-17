@@ -7,7 +7,8 @@ export type Options = {
     output?: string,
     stdout?: boolean,
     info?: boolean,
-    rejected?: boolean
+    rejected?: boolean,
+    legacy?: boolean
 }
 
 export type ExtractersObj = {
