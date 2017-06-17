@@ -1,5 +1,5 @@
 class DefaultExtracter {
-    extract(content) {
+    static extract(content) {
         return content.split(/[^a-z]/g)
     }
 }

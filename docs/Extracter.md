@@ -40,7 +40,7 @@ By convention, the name of the npm package is `purifycss-extracter-[typefile]` (
 ```js
 
 class PurifyExtracterJs {
-    extract(content) {
+    static extract(content) {
 
     }
 }
