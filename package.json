@@ -31,7 +31,7 @@
     "rollup-watch": "^3.2.2"
   },
   "scripts": {
-    "test": "jest index.js",
+    "test": "jest '(.+.test.js)'",
     "dev": "rollup -c config/rollup.config.js -w",
     "build": "rollup -c config/rollup.config.js",
     "flow": "flow"
