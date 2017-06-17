@@ -19,6 +19,7 @@ import {
     ERROR_REJECTED_TYPE,
     IGNORE_ANNOTATION
 } from "./constants/constants"
+import CSS_WHITELIST from "./constants/cssWhitelist"
 
 import DefaultExtracter from "./Extracters/DefaultExtracter"
 
@@ -108,6 +109,8 @@ class PurifyCss {
         arraySelector.forEach(selector => {
             selectors.add(selector)
         })
+        // Remove empty string
+        selectors.delete("")
         return selectors
     }
 
@@ -124,6 +127,11 @@ class PurifyCss {
                         selectorsInRule.push(selector.value)
                     } else if (selector.type === "attribute") {
                         selectorsInRule.push(selector.raws.unquoted)
+                    } else if (
+                        selector.type === "universal" ||
+                        selector.type === "pseudo"
+                    ) {
+                        selectorsInRule.push(selector.value)
                     }
                 })
             }).process(node.selector)
@@ -138,6 +146,8 @@ class PurifyCss {
                     if (keepSelector) return
                 }
                 if (selectors.has(selector)) return
+                // Universal selector, pseudo class
+                if (CSS_WHITELIST.includes(selector)) return
             }
             node.remove()
         })
