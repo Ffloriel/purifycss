@@ -2,6 +2,7 @@ import babel from "rollup-plugin-babel"
 import builtins from "rollup-plugin-node-builtins"
 import commonjs from "rollup-plugin-commonjs"
 import resolve from "rollup-plugin-node-resolve"
+import flow from "rollup-plugin-flow"
 
 export default {
     entry: "src/index.js",
@@ -18,6 +19,7 @@ export default {
     plugins: [
         builtins(),
         resolve(),
+        flow(),
         commonjs(),
         babel({
             exclude: "node_modules/**",
@@ -25,6 +27,12 @@ export default {
             plugins: ["external-helpers", "transform-class-properties"]
         })
     ],
-    external: ["postcss", "postcss-selector-parser", "rework", "uglifyjs"],
+    external: [
+        "postcss",
+        "postcss-selector-parser",
+        "rework",
+        "uglifyjs",
+        "fs"
+    ],
     sourceMap: false
 }
