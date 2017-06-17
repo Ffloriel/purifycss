@@ -26,7 +26,7 @@ class PurifyCss {
             throw new Error(ERROR_MISSING_CONTENT)
         if (!options.css || !options.css.length)
             throw new Error(ERROR_MISSING_CSS)
-        this.options = Object.assign(options, defaultOptions)
+        this.options = Object.assign(defaultOptions, options)
         this.selectors = new Set()
     }
 
@@ -37,6 +37,15 @@ class PurifyCss {
             this.options.extracters
         )
         // Get css selectors and remove unused ones
+        let files = []
+        for (let file of this.options.css) {
+            const cssContent = fs.readFileSync(file, "utf8")
+            files.push({
+                file,
+                css: this.getSelectorsCss(cssContent, cssClasses)
+            })
+        }
+        return files
     }
 
     extractFileSelector(
@@ -45,13 +54,14 @@ class PurifyCss {
     ) {
         let selectors = new Set()
         for (let file of files) {
-            const content = fs.readFileSync(file)
+            const content = fs.readFileSync(file, "utf8")
             const extracter = this.getFileExtracter(file, extracters)
             selectors = new Set(
                 ...selectors,
                 this.extractSelectors(content, extracter)
             )
         }
+        return selectors
     }
 
     /**
@@ -59,7 +69,8 @@ class PurifyCss {
      * @param {string} filename Name of the file
      * @param {array} extracters Array of extracters definition objects
      */
-    getFileExtracter(filename: string, extracters: Array<ExtractersObj>) {
+    getFileExtracter(filename: string, extracters: Array<ExtractersObj> = []) {
+        if (!extracters.length) return DefaultExtracter
         const extracterObj: ExtractersObj = extracters.find(extracter =>
             extracter.extensions.find(ext => filename.endsWith(ext))
         )
@@ -78,7 +89,7 @@ class PurifyCss {
         return selectors
     }
 
-    getSelectorsCss(css: string) {
+    getSelectorsCss(css: string, selectors: Set<string>) {
         const root = postcss.parse(css)
         root.walkRules(node => {
             const annotation = node.prev()
@@ -89,15 +100,17 @@ class PurifyCss {
                 selectors.walk(selector => {
                     if (selector.type === "class" || selector.type === "tag") {
                         selectorsInRule.push(selector.value)
+                    } else if (selector.type === "attribute") {
+                        selectorsInRule.push(selector.raws.unquoted)
                     }
                 })
             }).process(node.selector)
             for (let selector of selectorsInRule) {
-                if (this.selectors.has(selector)) return
+                if (selectors.has(selector)) return
             }
             node.remove()
         })
-        return root
+        return root.toString()
     }
 
     isIgnoreAnnotation(node) {
