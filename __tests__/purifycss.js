@@ -116,33 +116,64 @@ describe("initialize purifycss", () => {
         })
     })
 
-    it("throws an error with an incorrect stdout option", () => {
+    it("throws an error with an incorrect extracter option", () => {
         expect(() => {
             new PurifyCss({
                 content: ["index.html"],
                 css: ["style.css"],
-                stdout: {}
+                extracters: {}
             })
         }).toThrow()
         expect(() => {
             new PurifyCss({
                 content: ["index.html"],
                 css: ["style.css"],
-                stdout: 100
+                extracters: 100
             })
         }).toThrow()
         expect(() => {
             new PurifyCss({
                 content: ["index.html"],
                 css: ["style.css"],
-                stdout: "hello"
+                extraters: "hello"
             }).toThrow()
         })
         expect(() => {
             new PurifyCss({
                 content: ["index.html"],
                 css: ["style.css"],
-                stdout: () => {}
+                extracters: () => {}
+            }).toThrow()
+        })
+    })
+
+    it("throws an error with an incorrect whitelist option", () => {
+        expect(() => {
+            new PurifyCss({
+                content: ["index.html"],
+                css: ["style.css"],
+                whitelist: {}
+            })
+        }).toThrow()
+        expect(() => {
+            new PurifyCss({
+                content: ["index.html"],
+                css: ["style.css"],
+                whitelist: 100
+            })
+        }).toThrow()
+        expect(() => {
+            new PurifyCss({
+                content: ["index.html"],
+                css: ["style.css"],
+                whitelist: "hello"
+            }).toThrow()
+        })
+        expect(() => {
+            new PurifyCss({
+                content: ["index.html"],
+                css: ["style.css"],
+                whitelist: () => {}
             }).toThrow()
         })
     })
@@ -238,5 +269,21 @@ describe("initialize purifycss", () => {
                 rejected: () => {}
             }).toThrow()
         })
+    })
+})
+
+describe("purify methods", () => {
+    it("purify correctly", () => {
+        const purifyCss = new PurifyCss({
+            content: [
+                "./__tests__/test_examples/attribute_selector/attribute_selector.html"
+            ],
+            css: [
+                "./__tests__/test_examples/attribute_selector/attribute_selector.css"
+            ]
+        })
+        const received = purifyCss.purify()
+        console.log(received)
+        expect(received).toEqual({})
     })
 })
