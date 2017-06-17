@@ -95,7 +95,7 @@ class PurifyCss {
             const annotation = node.prev()
             if (this.isIgnoreAnnotation(annotation)) return
             const nodeType = node.type
-            const selectorsInRule = []
+            let selectorsInRule = []
             selectorParser(selectors => {
                 selectors.walk(selector => {
                     if (selector.type === "class" || selector.type === "tag") {
@@ -106,6 +106,15 @@ class PurifyCss {
                 })
             }).process(node.selector)
             for (let selector of selectorsInRule) {
+                if (this.options.legacy) {
+                    const sels = selector.split(/[^a-z]/g)
+                    let keepSelector = false
+                    for (let sel of sels) {
+                        if (!selectors.has(sel)) break
+                        keepSelector = true
+                    }
+                    if (keepSelector) return
+                }
                 if (selectors.has(selector)) return
             }
             node.remove()

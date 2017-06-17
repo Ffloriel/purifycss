@@ -1,4 +1,6 @@
-import PurifyCss from "./../lib/purifycss"
+// import PurifyCss from "./../lib/purifycss"
+import PurifyCss from "./../src/index"
+const root = "./__tests__/test_examples/"
 
 describe("initialize purifycss", () => {
     it("throw an error without options", () => {
@@ -272,8 +274,8 @@ describe("initialize purifycss", () => {
     })
 })
 
-describe("purify methods", () => {
-    it("purify correctly", () => {
+describe("purify methods with files", () => {
+    it("purify correctly (legacy)", () => {
         const purifyCss = new PurifyCss({
             content: [
                 "./__tests__/test_examples/attribute_selector/attribute_selector.html"
@@ -282,8 +284,104 @@ describe("purify methods", () => {
                 "./__tests__/test_examples/attribute_selector/attribute_selector.css"
             ]
         })
-        const received = purifyCss.purify()
-        console.log(received)
-        expect(received).toEqual({})
+        const received = purifyCss.purify()[0].css
+        expect(received.includes(".ui[class*=\"center aligned\"].grid")).toBe(
+            true
+        )
+    })
+
+    describe("purify correctly (find intact classes)", () => {
+        it("finds .single", () => {
+            const purifyCss = new PurifyCss({
+                content: [`${root}simple/simple.js`],
+                css: [`${root}simple/simple.css`],
+                legacy: true
+            })
+            const result = purifyCss.purify()[0].css
+            expect(result.includes(".single")).toBe(true)
+        })
+
+        it("finds .double-class", () => {
+            const purifyCss = new PurifyCss({
+                content: [`${root}simple/simple.js`],
+                css: [`${root}simple/simple.css`],
+                legacy: true
+            })
+            const result = purifyCss.purify()[0].css
+            expect(result.includes(".double-class")).toBe(true)
+        })
+
+        it("can find .triple-simple-class", () => {
+            const purifyCss = new PurifyCss({
+                content: [`${root}simple/simple.js`],
+                css: [`${root}simple/simple.css`],
+                legacy: true
+            })
+            const result = purifyCss.purify()[0].css
+            expect(result.includes(".triple-simple-class")).toBe(true)
+        })
+    })
+
+    describe("classes that are added together", () => {
+        it("can find .added-together", () => {
+            const purifyCss = new PurifyCss({
+                content: [`${root}combined/combined.js`],
+                css: [`${root}combined/combined.css`],
+                legacy: true
+            })
+
+            const result = purifyCss.purify()[0].css
+            expect(result.includes(".added-together")).toBe(true)
+        })
+
+        it("can find .array-joined", () => {
+            const purifyCss = new PurifyCss({
+                content: [`${root}combined/combined.js`],
+                css: [`${root}combined/combined.css`],
+                legacy: true
+            })
+
+            const result = purifyCss.purify()[0].css
+            expect(result.includes(".array-joined")).toBe(true)
+        })
+    })
+
+    describe("filters out unused selectors", () => {
+        const purifycss = new PurifyCss({
+            content: [`${root}remove_unused/remove_unused.js`],
+            css: [`${root}remove_unused/remove_unused.css`],
+            legacy: true
+        })
+        const result = purifycss.purify()[0].css
+
+        it("contains .used-class", () => {
+            const purifycss = new PurifyCss({
+                content: [`${root}remove_unused/remove_unused.js`],
+                css: [`${root}remove_unused/remove_unused.css`],
+                legacy: true
+            })
+            const result = purifycss.purify()[0].css
+            expect(result.includes(".used-class")).toBe(true)
+        })
+
+        it("removes .unused-class", () => {
+            const purifycss = new PurifyCss({
+                content: [`${root}remove_unused/remove_unused.js`],
+                css: [`${root}remove_unused/remove_unused.css`],
+                legacy: true
+            })
+            const result = purifycss.purify()[0].css
+            expect(result.includes(".unused-class")).toBe(false)
+        })
+
+        it("removes .another-one-not-found", () => {
+            const purifycss = new PurifyCss({
+                content: [`${root}remove_unused/remove_unused.js`],
+                css: [`${root}remove_unused/remove_unused.css`],
+                legacy: true
+            })
+            const result = purifycss.purify()[0].css
+            expect(result.includes(".another-one-not-found")).toBe(false)
+        })
     })
 })
