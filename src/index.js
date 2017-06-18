@@ -20,6 +20,7 @@ import {
     IGNORE_ANNOTATION
 } from "./constants/constants"
 import CSS_WHITELIST from "./constants/cssWhitelist"
+import SELECTOR_STANDARD_TYPES from "./constants/selectorTypes"
 
 import DefaultExtracter from "./Extracters/DefaultExtracter"
 
@@ -76,14 +77,18 @@ class PurifyCss {
         extracters: Array<ExtractersObj>
     ) {
         let selectors = new Set()
-        for (let file of files) {
-            const content = fs.readFileSync(file, "utf8")
-            const extracter = this.getFileExtracter(file, extracters)
-            selectors = new Set(
-                ...selectors,
-                this.extractSelectors(content, extracter)
-            )
+        for (let globfile of files) {
+            const filesnames = glob.sync(globfile)
+            for (let file of filesnames) {
+                const content = fs.readFileSync(file, "utf8")
+                const extracter = this.getFileExtracter(file, extracters)
+                selectors = new Set(
+                    ...selectors,
+                    this.extractSelectors(content, extracter)
+                )
+            }
         }
+
         return selectors
     }
 
@@ -120,36 +125,34 @@ class PurifyCss {
             const annotation = node.prev()
             if (this.isIgnoreAnnotation(annotation)) return
             const nodeType = node.type
-            let selectorsInRule = []
-            selectorParser(selectors => {
-                selectors.walk(selector => {
-                    if (selector.type === "class" || selector.type === "tag") {
-                        selectorsInRule.push(selector.value)
-                    } else if (selector.type === "attribute") {
-                        selectorsInRule.push(selector.raws.unquoted)
-                    } else if (
-                        selector.type === "universal" ||
-                        selector.type === "pseudo"
-                    ) {
-                        selectorsInRule.push(selector.value)
+            node.selector = selectorParser(selectorsParsed => {
+                selectorsParsed.walk(selector => {
+                    let selectorsInRule = []
+                    if (selector.type === "selector") {
+                        for (let nodeSelector of selector.nodes) {
+                            const { type, value } = nodeSelector
+                            if (SELECTOR_STANDARD_TYPES.includes(type)) {
+                                selectorsInRule.push(value)
+                            } else if (type === "attribute") {
+                                selectorsInRule.push(nodeSelector.raws.unquoted)
+                            }
+                        }
+
+                        let keepSelector = this.shouldKeepSelector(
+                            selectors,
+                            selectorsInRule
+                        )
+                        if (!keepSelector) {
+                            selector.remove()
+                        }
                     }
                 })
-            }).process(node.selector)
-            for (let selector of selectorsInRule) {
-                if (this.options.legacy) {
-                    const sels = selector.split(/[^a-z]/g)
-                    let keepSelector = false
-                    for (let sel of sels) {
-                        if (!selectors.has(sel)) break
-                        keepSelector = true
-                    }
-                    if (keepSelector) return
-                }
-                if (selectors.has(selector)) return
-                // Universal selector, pseudo class
-                if (CSS_WHITELIST.includes(selector)) return
-            }
-            node.remove()
+            }).process(node.selector).result
+
+            const parent = node.parent
+            // // Remove empty rules
+            if (!node.selector) node.remove()
+            if (this.isRuleEmpty(parent)) parent.remove()
         })
         return root.toString()
     }
@@ -157,6 +160,44 @@ class PurifyCss {
     isIgnoreAnnotation(node) {
         if (node && node.type === "comment") {
             return node.text.includes(IGNORE_ANNOTATION)
+        }
+        return false
+    }
+
+    isRuleEmpty(node) {
+        if (
+            (node.type === "decl" && !node.value) ||
+            ((node.type === "rule" && !node.selector) ||
+                (node.nodes && !node.nodes.length)) ||
+            (node.type === "atrule" &&
+                ((!node.nodes && !node.params) ||
+                    (!node.params && !nodes.node.length)))
+        ) {
+            return true
+        }
+        return false
+    }
+
+    shouldKeepSelector(
+        selectorsInContent: Set<string>,
+        selectorsInRule: Array<string>
+    ) {
+        for (let selector of selectorsInRule) {
+            if (this.options.legacy) {
+                const sels = selector.split(/[^a-z]/g)
+                let keepSelector = false
+                for (let sel of sels) {
+                    if (!sel) continue
+                    if (!selectorsInContent.has(sel)) break
+                    keepSelector = true
+                }
+                if (keepSelector) return true
+            }
+            if (
+                selectorsInContent.has(selector) ||
+                CSS_WHITELIST.includes(selector)
+            )
+                return true
         }
         return false
     }
