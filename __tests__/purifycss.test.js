@@ -627,4 +627,16 @@ describe("purify methods with files", () => {
             expect(result.includes("row:after")).toBe(false)
         })
     })
+
+    describe("ignore comment", () => {
+        it("ignore h1", () => {
+            const purifycss = new PurifyCss({
+                content: [`${root}ignore_comment/ignore_comment.html`],
+                css: [`${root}ignore_comment/ignore_comment.css`],
+                legacy: true
+            })
+            const result = purifycss.purify()[0].css
+            expect(result.includes("h1")).toBe(true)
+        })
+    })
 })
