@@ -1,4 +1,4 @@
-import PurifyCss from "./../lib/purifycss"
+import PurifyCss from "./../src/index"
 import { TEST_1_CONTENT, TEST_1_EXPECTED } from "./extractSelectorContent"
 
 test("extractSelector", () => {
