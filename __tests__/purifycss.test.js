@@ -639,4 +639,16 @@ describe("purify methods with files", () => {
             expect(result.includes("h1")).toBe(true)
         })
     })
+
+    describe("font-face", () => {
+        it("keeps font-face", () => {
+            const purifycss = new PurifyCss({
+                content: [`${root}font_face/font_face.html`],
+                css: [`${root}font_face/font_face.css`],
+                legacy: true
+            })
+            const result = purifycss.purify()[0].css
+            expect(result.includes("font-face")).toBe(true)
+        })
+    })
 })
