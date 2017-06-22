@@ -1,5 +1,5 @@
 // @flow
-import type { ExtractersObj, Options } from "./../flow-typed/index"
+import type { ExtractersObj, Options } from "./../flow/index.js"
 
 import fs from "fs"
 import glob from "glob"
@@ -74,8 +74,8 @@ class PurifyCss {
 
     extractFileSelector(
         files: Array<string>,
-        extracters: Array<ExtractersObj>
-    ) {
+        extracters?: Array<ExtractersObj>
+    ): Set<string> {
         let selectors = new Set()
         for (let globfile of files) {
             const filesnames = glob.sync(globfile)
@@ -99,7 +99,7 @@ class PurifyCss {
      */
     getFileExtracter(filename: string, extracters: Array<ExtractersObj> = []) {
         if (!extracters.length) return DefaultExtracter
-        const extracterObj: ExtractersObj = extracters.find(extracter =>
+        const extracterObj: any = extracters.find(extracter =>
             extracter.extensions.find(ext => filename.endsWith(ext))
         )
         return extracterObj.extracter
@@ -157,21 +157,21 @@ class PurifyCss {
         return root.toString()
     }
 
-    isIgnoreAnnotation(node) {
+    isIgnoreAnnotation(node: Object) {
         if (node && node.type === "comment") {
             return node.text.includes(IGNORE_ANNOTATION)
         }
         return false
     }
 
-    isRuleEmpty(node) {
+    isRuleEmpty(node: Object) {
         if (
             (node.type === "decl" && !node.value) ||
             ((node.type === "rule" && !node.selector) ||
                 (node.nodes && !node.nodes.length)) ||
             (node.type === "atrule" &&
                 ((!node.nodes && !node.params) ||
-                    (!node.params && !nodes.node.length)))
+                    (!node.params && !node.nodes.length)))
         ) {
             return true
         }

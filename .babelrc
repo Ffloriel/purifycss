@@ -12,6 +12,7 @@
         "development": {
             "presets": [
                 [
+                    "flow",
                     "env",
                     {
                         "targets": {

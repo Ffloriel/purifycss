@@ -1,4 +1,5 @@
 // @flow
+
 export type Options = {
     content: Array<string>,
     css: Array<string>,
@@ -13,5 +14,5 @@ export type Options = {
 
 export type ExtractersObj = {
     extracter: Object,
-    extension: Array<string>
+    extensions: Array<string>
 }
