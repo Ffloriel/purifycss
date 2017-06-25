@@ -1,8 +1,8 @@
 # PurifyCSS  [![Build Status](https://travis-ci.org/Ffloriel/purifycss.svg?branch=v2)](https://travis-ci.org/Ffloriel/purifycss) [![CircleCi](https://circleci.com/gh/Ffloriel/purifycss/tree/v2.svg?style=shield)]() [![David](https://img.shields.io/david/Ffloriel/purifycss.svg)]() [![David](https://img.shields.io/david/dev/Ffloriel/purifycss.svg)]()
 
 
-<p align="center">
-	<img src="./logo.png" style="max-height: 250px;" alt="Purify logo"/>
+<p align="center" style="max-height: 150px">
+	<img src="./logo.png" height="200" width="200" alt="Purify logo"/>
 </p>
 
 [![npm](https://img.shields.io/npm/dm/purify-css.svg)]()
